@@ -6,6 +6,7 @@
 
 .log + .log {
   margin-left: 0.5rem;
+  vertical-align: top;
 }
 
 .log strong {
