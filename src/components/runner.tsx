@@ -10,27 +10,6 @@ export default function Runner() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
-    if (!iframeRef.current?.contentWindow || !state.isRunning) {
-      return;
-    };
-
-    const iframeWindow = iframeRef.current.contentWindow;
-
-    const script = document.createElement('script');
-    script.text = `
-      try {
-        ${state.selectedCode ?? state.code}
-      } catch (error) {
-        console.error(new Error(error));
-      }
-    `;
-    iframeWindow.document.body.innerHTML = '';
-    iframeWindow.document.body.appendChild(script);
-    
-    setTimeout(() => dispatch({ type: 'RUN_COMPLETE' }), 500);
-  }, [iframeRef, state.isRunning, state.code, state.selectedCode, dispatch]);
-
-  useEffect(() => {
     if (!iframeRef.current?.contentWindow) {
       return;
     };
@@ -45,7 +24,32 @@ export default function Runner() {
         }
       });
     });
+
+    iframeWindow.addEventListener('error', (e) => {
+      e.preventDefault();
+      dispatch({
+        type: 'SET_LOGS',
+        payload: {
+          logs: [{ type: 'error', args: [new Error(e.error)] }]
+        }
+      });
+    });
   }, [iframeRef, dispatch]);
+
+  useEffect(() => {
+    if (!iframeRef.current?.contentWindow || !state.isRunning) {
+      return;
+    };
+
+    const iframeWindow = iframeRef.current.contentWindow;
+
+    const script = document.createElement('script');
+    script.text = state.selectedCode ?? state.code;
+    iframeWindow.document.body.innerHTML = '';
+    iframeWindow.document.body.appendChild(script);
+    
+    setTimeout(() => dispatch({ type: 'RUN_COMPLETE' }), 500);
+  }, [iframeRef, state.isRunning, state.code, state.selectedCode, dispatch]);
 
   return (
     <iframe
