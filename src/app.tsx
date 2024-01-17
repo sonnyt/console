@@ -1,16 +1,20 @@
-import { Panel, PanelResizeHandle, PanelGroup } from 'react-resizable-panels';
+import { Panel, PanelResizeHandle, PanelGroup } from "react-resizable-panels";
 
-import { ConsoleProvider } from './context/console';
-import Editor from './components/editor';
-import Logs from './components/logs';
-import Toolbar from './components/toolbar';
-import Runner from './components/runner';
-import styles from './app.module.css';
+import { ConsoleProvider } from "./context/console";
+import Editor from "./components/editor";
+import Logs from "./components/logs";
+import Toolbar from "./components/toolbar";
+import Runner from "./components/runner";
+import styles from "./app.module.css";
 
 export default function Home() {
   return (
     <ConsoleProvider>
-      <PanelGroup autoSaveId="panel_size" className={styles.container} direction="horizontal">
+      <PanelGroup
+        direction="horizontal"
+        autoSaveId="panel_size"
+        className={styles.container}
+      >
         <Panel>
           <Editor />
         </Panel>
@@ -22,5 +26,5 @@ export default function Home() {
       <Toolbar />
       <Runner />
     </ConsoleProvider>
-  )
+  );
 }
