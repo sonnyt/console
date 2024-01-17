@@ -1,5 +1,12 @@
+:root {
+  --toolbar-height: 31px;
+  --text-color: #abb2bf;
+  --bg-color: #1e2227;
+  --border-color: #3e4452;
+  --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+
 *,:before,:after {
-  box-sizing: border-box;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
@@ -10,9 +17,12 @@ html {
   font-size: 16px;
 }
 
-html,
 body {
   max-width: 100vw;
   max-height: 100vh;
   overflow: hidden;
+  line-height: 1.5;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
 }

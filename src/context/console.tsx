@@ -1,3 +1,5 @@
+'use client';
+
 import { useReducer, createContext, useContext } from 'react';
 
 import type { Type } from '@/libs/log';
@@ -5,6 +7,7 @@ import type { Type } from '@/libs/log';
 
 export type State = {
   code: string;
+  selectedCode: string | null;
   logs: { type: Type; args: any[] }[];
   isRunning: boolean;
 }
@@ -12,6 +15,7 @@ export type State = {
 const initialState: State = {
   logs: [],
   isRunning: false,
+  selectedCode: null,
   code: localStorage?.getItem('code') ?? '',
 };
 
@@ -46,11 +50,13 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         isRunning: true,
+        selectedCode: payload?.selectedCode,
       };
     case 'RUN_COMPLETE':
       return {
         ...state,
         isRunning: false,
+        selectedCode: null,
       };
     default:
       return state;

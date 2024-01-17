@@ -19,16 +19,16 @@ export default function Runner() {
     const script = document.createElement('script');
     script.text = `
       try {
-        ${state.code}
+        ${state.selectedCode ?? state.code}
       } catch (error) {
-        console.error(error);
+        console.error(new Error(error));
       }
     `;
     iframeWindow.document.body.innerHTML = '';
     iframeWindow.document.body.appendChild(script);
     
     setTimeout(() => dispatch({ type: 'RUN_COMPLETE' }), 500);
-  }, [iframeRef, state.isRunning, state.code, dispatch]);
+  }, [iframeRef, state.isRunning, state.code, state.selectedCode, dispatch]);
 
   useEffect(() => {
     if (!iframeRef.current?.contentWindow) {

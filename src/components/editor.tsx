@@ -19,8 +19,25 @@ export default function Editor() {
         label: 'Execute Code',
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
         contextMenuGroupId: 'navigation',
-        contextMenuOrder: 1.5,
-        run: () => dispatch({ type: 'RUN_CODE' })
+        contextMenuOrder: 0,
+        run: (editor) => {
+          const selectedCode = editor.getModel()?.getValueInRange(editor?.getSelection()!);
+
+          if (selectedCode?.trim()) {
+            dispatch({ type: 'RUN_CODE', payload: { selectedCode } });
+          } else {
+            dispatch({ type: 'RUN_CODE' });
+          }
+        }
+      });
+
+      monaco.editor.addEditorAction({
+        id: 'clear_console',
+        label: 'Clear Console',
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK],
+        contextMenuGroupId: 'navigation',
+        contextMenuOrder: 1,
+        run: () => dispatch({ type: 'CLEAR_LOGS' })
       });
     }
   }, [monaco, dispatch]);

@@ -1,0 +1,106 @@
+.container {
+  overflow: auto;
+  height: calc(100vh - var(--toolbar-height));
+}
+
+.logs {
+  margin: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+.logs > li {
+  padding: 0.25rem;
+  border-bottom: 1px solid #2c313c;
+  opacity: 0.75;
+  display: block;
+}
+
+.logs > li.warn {
+  color: #f0a45d;
+}
+
+.logs > li.error {
+  color: #ff616e;
+}
+
+.icon {
+  vertical-align: text-bottom;
+  margin-right: 0.35rem;
+  position: relative;
+  bottom: 1px;
+}
+
+.log_item {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.log_item + .log_item {
+  margin-left: 0.5rem;
+}
+
+.collapse {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.collapse:hover {
+  background-color: #2c313c;
+}
+
+.collapse > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 2rem;
+  font-style: normal;
+}
+
+.collapse > svg {
+  position: relative;
+  top: 2px;
+}
+
+.is_string {
+  color: #8cc265;
+}
+
+.is_undefined,
+.is_null {
+  color: var(--border-color);
+}
+
+.is_symbol {
+  color: #42b3c2;
+}
+
+.is_boolean,
+.is_number {
+  color: #4aa5f0;
+}
+
+.is_function,
+.is_set,
+.is_map,
+.is_object,
+.is_array {
+  font-style: italic;
+}
+
+.is_object > span {
+  color: #6b717d;
+}
+
+.is_error {
+  display: inline;
+  white-space: pre;
+}
+
+.is_set > ul > li:last-child,
+.is_map > ul > li:last-child,
+.is_array > ul > li:last-child {
+  opacity: .5;
+}
