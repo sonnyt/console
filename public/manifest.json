@@ -1,8 +1,8 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JS Console",
+  "name": "Simple JavaScript playground",
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1e2227",
+  "background_color": "#1e2227"
 }
