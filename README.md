@@ -11,3 +11,7 @@ I needed a convenient way to quickly run JavaScript code without having to open 
 - Lightweight and user-friendly
 - Localstorage support for data persistence
 - Powered by [Monaco](https://microsoft.github.io/monaco-editor/) editor for a rich editing experience
+
+## Shortcuts
+- `CMD/CTRL+ENTER` - Runs the code. If a chunk of code is selected, it will only run that portion.
+- `CMD/CTRL+K` - Clears the logs.
