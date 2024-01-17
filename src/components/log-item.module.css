@@ -1,5 +1,6 @@
 .log {
   font-size: .75rem;
+  line-height: 1.5;
   display: inline-block;
 }
 
@@ -14,7 +15,6 @@
 .collapse {
   cursor: pointer;
   display: inline-block;
-  vertical-align: top;
 }
 
 .collapse:hover {
@@ -27,6 +27,9 @@
   margin: 0;
   margin-left: 2rem;
   font-style: normal;
+  padding-left: 1rem;
+  margin-left: 0.43rem;
+  border-left: 1px solid var(--border-color);
 }
 
 .collapse > svg {
