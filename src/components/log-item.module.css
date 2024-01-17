@@ -1,6 +1,6 @@
 .log {
+  font-size: .75rem;
   display: inline-block;
-  vertical-align: top;
 }
 
 .log + .log {
@@ -14,6 +14,7 @@
 .collapse {
   cursor: pointer;
   display: inline-block;
+  vertical-align: top;
 }
 
 .collapse:hover {
@@ -35,6 +36,10 @@
 
 .is_string {
   color: #8cc265;
+}
+
+.index {
+  vertical-align: top;
 }
 
 .is_undefined,

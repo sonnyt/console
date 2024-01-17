@@ -53,7 +53,7 @@ const ArrayLog = ({
         {arr.map((item, index) => {
           return (
             <>
-              <LogItem key={index} isMinimized={true} logs={[item]} />
+              <LogItem isMinimized={true} logs={[item]} />
               {index < arr.length - 1 && ","}
             </>
           );
@@ -64,14 +64,14 @@ const ArrayLog = ({
         <ul>
           {arr.map((item, index) => {
             return (
-              <li key={index}>
-                <strong>{index}</strong>:{" "}
-                <LogItem key={index} isMinimized={false} logs={[item]} />
+              <li key={`arr_log_list_${index}`}>
+                <span className={styles.index}><strong>{index}</strong>:{" "}</span>
+                <LogItem isMinimized={false} logs={[item]} />
               </li>
             );
           })}
           <li>
-            <strong>length</strong>: <NumberLog num={arr.length} />
+            <span className={styles.index}><strong>length</strong>:</span> <NumberLog num={arr.length} />
           </li>
         </ul>
       </>
@@ -100,7 +100,7 @@ const ObjectLog = ({
           return (
             <>
               <span>{key}</span>:{" "}
-              <LogItem key={index} isMinimized={true} logs={[item]} />
+              <LogItem isMinimized={true} logs={[item]} />
               {index < objArr.length - 1 && ", "}
             </>
           );
@@ -111,9 +111,9 @@ const ObjectLog = ({
         <ul>
           {objArr.map(([key, item], index) => {
             return (
-              <li key={index}>
-                <strong>{key}</strong>:{" "}
-                <LogItem key={index} isMinimized={false} logs={[item]} />
+              <li key={`obj_log_list_${index}`}>
+                <span className={styles.index}><strong>{key}</strong>:{" "}</span>
+                <LogItem isMinimized={false} logs={[item]} />
               </li>
             );
           })}
@@ -146,7 +146,7 @@ const MapLog = ({
           return (
             <>
               <span>{key}</span> {"=>"}{" "}
-              <LogItem key={index} isMinimized={true} logs={[item]} />
+              <LogItem isMinimized={true} logs={[item]} />
               {index < mapArray.length - 1 && ", "}
             </>
           );
@@ -157,14 +157,14 @@ const MapLog = ({
         <ul>
           {mapArray.map(([key, item], index) => {
             return (
-              <li key={index}>
-                <strong>{key}</strong>:{" "}
-                <LogItem key={index} isMinimized={false} logs={[item]} />
+              <li key={`map_log_list_${index}`}>
+                <span className={styles.index}><strong>{key}</strong>:{" "}</span>
+                <LogItem isMinimized={false} logs={[item]} />
               </li>
             );
           })}
           <li>
-            <strong>size</strong>: <NumberLog num={map.size} />
+            <span className={styles.index}><strong>size</strong>:</span> <NumberLog num={map.size} />
           </li>
         </ul>
       </>
@@ -194,7 +194,7 @@ const SetLog = ({
         {setArray.map((item, index) => {
           return (
             <>
-              <LogItem key={index} isMinimized={true} logs={[item]} />
+              <LogItem isMinimized={true} logs={[item]} />
               {index < setArray.length - 1 && ","}
             </>
           );
@@ -205,14 +205,14 @@ const SetLog = ({
         <ul>
           {setArray.map((item, index) => {
             return (
-              <li key={index}>
-                <strong>{index}</strong>:{" "}
-                <LogItem key={index} isMinimized={false} logs={[item]} />
+              <li key={`set_log_list_${index}`}>
+                <span className={styles.index}><strong>{index}</strong>:{" "}</span>
+                <LogItem isMinimized={false} logs={[item]} />
               </li>
             );
           })}
           <li>
-            <strong>size</strong>: <NumberLog num={set.size} />
+            <span className={styles.index}><strong>size</strong>:</span> <NumberLog num={set.size} />
           </li>
         </ul>
       </>

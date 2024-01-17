@@ -6,7 +6,6 @@
 .logs {
   margin: 0;
   list-style: none;
-  font-size: 0.875rem;
   padding: 0.5rem 1rem;
   font-family: "Fira Code", "Fira Mono", Menlo, Consolas, "DejaVu Sans Mono", monospace;
 }
