@@ -1,5 +1,4 @@
-import { useConsole } from '@/context/console';
-
+import { useConsole } from '../context/console';
 import styles from './toolbar.module.css';
 import Icons from './icons';
 
@@ -13,7 +12,7 @@ export default function Toolbar() {
       <div>
         {state.isRunning && <Icons.loading className={`${styles.icon} ${styles.loading}`} width={14} height={14} />}
         {!state.isRunning && (
-          <button type="button" title="Run Code (⌘Enter)" onClick={() => dispatch({ type: 'RUN_CODE' }) }>
+          <button type="button" onClick={() => dispatch({ type: 'RUN_CODE' }) }>
             <Icons.run className={`${styles.icon} ${styles.run}`} width={14} height={14} />
           </button>
         )}
@@ -23,9 +22,6 @@ export default function Toolbar() {
         {errors.length}
         <Icons.warning className={`${styles.icon} ${styles.warning}`} width={14} height={14} />
         {warnings.length}
-        <button type="button" title="Clear Console (⌘K)" onClick={() => dispatch({ type: 'CLEAR_LOGS' })}>
-          <Icons.clear className={`${styles.icon} ${styles.clear}`} width={14} height={14} />
-        </button>
       </div>
     </div>
   );

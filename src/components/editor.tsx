@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Editor as CodeEditor, useMonaco } from '@monaco-editor/react';
 
-import { useConsole } from '@/context/console';
-import { darkTheme, options } from '@/libs/editor';
+import { useConsole } from '../context/console';
+import { darkTheme, options } from '../libs/editor';
 import styles from './editor.module.css';
 
 export default function Editor() {

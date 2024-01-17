@@ -1,8 +1,6 @@
-'use client';
-
 import { useReducer, createContext, useContext } from 'react';
 
-import type { Type } from '@/libs/log';
+import type { Type } from '../libs/log';
 
 
 export type State = {
@@ -27,7 +25,7 @@ const reducer = (state: State, action: Action) => {
   switch (type) {
     case 'SET_CODE':
       const code = payload.code?.trim() || '';
-      localStorage?.setItem('code', code);
+      localStorage.setItem('code', code);
       return { ...state, code };
     case 'SET_LOGS':
       return {
@@ -57,10 +55,9 @@ const reducer = (state: State, action: Action) => {
 };
 
 export function ConsoleProvider({ children }: { children: React.ReactNode }) {
-  const code = typeof window !== 'undefined' ? localStorage?.getItem('code') : '';
   const [state, dispatch] = useReducer(reducer, {
     logs: [],
-    code: code ?? '',
+    code: localStorage?.getItem('code') ?? '',
     isRunning: false,
     selectedCode: null,
   });
