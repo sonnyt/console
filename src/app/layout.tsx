@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'JS/TS Console',
-  description: 'Simple JavaScript / TypeScript playground',
+  title: 'JS Console',
+  description: 'Simple JavaScript playground',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

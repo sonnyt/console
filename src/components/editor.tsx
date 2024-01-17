@@ -45,7 +45,7 @@ export default function Editor() {
   return (
     <div className={styles.container}>
       <CodeEditor
-        language="typescript"
+        language="javascript"
         height="100vh"
         theme="vs-dark"
         options={options}
