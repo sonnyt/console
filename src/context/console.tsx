@@ -12,13 +12,6 @@ export type State = {
   isRunning: boolean;
 }
 
-const initialState: State = {
-  logs: [],
-  isRunning: false,
-  selectedCode: null,
-  code: localStorage?.getItem('code') ?? '',
-};
-
 export type ActionType = 'SET_CODE' | 'SET_LOGS' | 'CLEAR_LOGS' | 'RUN_CODE' | 'RUN_COMPLETE';
 
 type Action = {
@@ -26,7 +19,7 @@ type Action = {
   type: ActionType;
 };
 
-const ConsoleContext = createContext<[typeof initialState, React.Dispatch<any>]>([initialState, () => {}]);
+const ConsoleContext = createContext<[State, React.Dispatch<any>]>([{} as any, () => {}]);
 
 const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
@@ -64,7 +57,13 @@ const reducer = (state: State, action: Action) => {
 };
 
 export function ConsoleProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const code = typeof window !== 'undefined' ? localStorage?.getItem('code') : '';
+  const [state, dispatch] = useReducer(reducer, {
+    logs: [],
+    code: code ?? '',
+    isRunning: false,
+    selectedCode: null,
+  });
 
   return (
     <ConsoleContext.Provider value={[state, dispatch]}>
