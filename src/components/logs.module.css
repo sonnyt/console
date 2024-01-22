@@ -1,6 +1,6 @@
 .container {
+  height: 100%;
   overflow: auto;
-  height: calc(100vh - var(--toolbar-height));
 }
 
 .logs {

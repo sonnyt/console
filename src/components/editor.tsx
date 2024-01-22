@@ -3,7 +3,6 @@ import { Editor as CodeEditor, useMonaco } from "@monaco-editor/react";
 
 import { useConsole } from "../context/console";
 import { darkTheme, options } from "../libs/editor";
-import styles from "./editor.module.css";
 
 export default function Editor() {
   const monaco = useMonaco();
@@ -47,9 +46,8 @@ export default function Editor() {
   }, [monaco, dispatch]);
 
   return (
-    <div className={styles.container}>
       <CodeEditor
-        height="100vh"
+        height="100%"
         theme="vs-dark"
         options={options}
         value={state.code}
@@ -57,6 +55,5 @@ export default function Editor() {
         onMount={(editor) => editor.focus()}
         onChange={(code) => dispatch({ type: "SET_CODE", payload: { code } })}
       />
-    </div>
   );
 }
