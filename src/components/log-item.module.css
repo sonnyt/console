@@ -19,7 +19,7 @@
 }
 
 .collapse:hover {
-  background-color: #2c313c;
+  background-color: var(--highlight-color);
 }
 
 .collapse > ul {

@@ -12,10 +12,13 @@
 
 .logs > li {
   padding: 0.25rem;
-  border-bottom: 1px solid #2c313c;
+  border-bottom: 1px solid var(--highlight-color);
   opacity: 0.75;
   display: block;
   line-height: 1;
+  animation-iteration-count: initial;
+  animation-name: highlight;
+  animation-duration: 1s;
 }
 
 .logs > li.warn {
@@ -31,4 +34,14 @@
   margin-right: 0.35rem;
   position: relative;
   bottom: 1px;
+}
+
+@keyframes highlight {
+  from {
+      background-color: #2c313c;
+  }
+
+  to {
+      background-color: transparent;
+  }
 }
