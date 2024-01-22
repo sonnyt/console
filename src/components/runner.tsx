@@ -8,14 +8,16 @@ export default function Runner() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
-    if (!iframeRef.current?.contentWindow) {
+    if (!iframeRef.current?.contentWindow || !state.isRunning) {
       return;
     };
 
     const iframeWindow = iframeRef.current.contentWindow;
 
-    const originalConsole = (iframeWindow as any).console;
+    // reload the iframe to reset the window object
+    iframeWindow.location.reload();
 
+    // stub the iframe console
     (iframeWindow as any).console = consoleStub((type, ...args) => {
       dispatch({
         type: 'SET_LOGS',
@@ -25,7 +27,8 @@ export default function Runner() {
       });
     });
 
-    function errorHandle(e: ErrorEvent) {
+    // listen for errors in the iframe
+    iframeWindow.addEventListener('error', (e: ErrorEvent) => {
       e.preventDefault();
       dispatch({
         type: 'SET_LOGS',
@@ -33,34 +36,14 @@ export default function Runner() {
           logs: [{ type: 'error', args: [new Error(e.error)] }]
         }
       });
-    };
+    });
 
-    iframeWindow.addEventListener('error', errorHandle);
-
-    return () => {
-      (iframeWindow as any).console = originalConsole;
-      iframeWindow.removeEventListener('error', errorHandle);
-    };
-  }, [iframeRef, dispatch]);
-
-  useEffect(() => {
-    if (!iframeRef.current?.contentWindow || !state.isRunning) {
-      return;
-    };
-
-    const iframeWindow = iframeRef.current.contentWindow;
-
+    // create a script tag and append it to the iframe body
     const script = document.createElement('script');
     script.text = state.selectedCode ?? state.code;
-    iframeWindow.document.body.innerHTML = '';
     iframeWindow.document.body.appendChild(script);
-    
-    const timeOut = setTimeout(() => dispatch({ type: 'RUN_COMPLETE' }), 500);
 
-    return () => {
-      clearTimeout(timeOut);
-      iframeWindow.document.body.innerHTML = '';
-    };
+    setTimeout(() => dispatch({ type: 'RUN_COMPLETE' }), 250);
   }, [iframeRef, state.isRunning, state.code, state.selectedCode, dispatch]);
 
   return (
