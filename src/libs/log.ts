@@ -17,3 +17,35 @@ export default function consoleStub(
     },
   });
 }
+
+export function promiseStub(
+  scope: WeakMap<any, any>,
+  originalPromise: PromiseConstructor
+) {
+  return function (callback: any) {
+    const promise = new originalPromise(callback);
+    scope.set(promise, { state: "pending", value: null });
+
+    promise.then(
+      (value) => {
+        scope.set(promise, { state: "fulfilled", value: value });
+      },
+      (value) => {
+        scope.set(promise, { state: "rejected", value: value });
+      }
+    );
+
+    return promise;
+  };
+}
+
+export function proxyStub(
+  scope: WeakMap<any, any>,
+  originalProxy: ProxyConstructor
+) {
+  return function <T extends object>(target: T, handler: ProxyHandler<T>) {
+    const proxy = new originalProxy(target, handler);
+    scope.set(proxy, { target, handler, isProxy: true });
+    return proxy;
+  };
+}

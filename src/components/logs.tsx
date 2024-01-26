@@ -42,7 +42,7 @@ export default function Logs() {
             {log.type === "warn" && (
               <Icons.Warning className={styles.icon} width={14} height={14} />
             )}
-            <LogItem logs={log.args} isMinimized={false} />
+            <LogItem scope={log.scope} logs={log.args} isMinimized={false} />
           </li>
         ))}
       </ul>
