@@ -1,18 +1,23 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import styles from "./log-item.module.css";
 import Icons from "./icons";
+import { getObjectName, getType, parseFunction } from "../libs/utils";
+import { NodeTypes, ValueTypes } from "../libs/constants";
 
 const Collapsable = ({
   children,
+  toggle = false,
   ...props
-}: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) => {
+}: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement> & { toggle?: boolean }>) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const onToggle = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     setIsCollapsed(!isCollapsed);
   };
+
+  const components = React.Children.toArray(children);
 
   return (
     <div
@@ -25,25 +30,35 @@ const Collapsable = ({
       ) : (
         <Icons.Down width={14} height={14} />
       )}
-      {(children as any)[0]}
-      {!isCollapsed && (children as any)[1]}
+      {toggle ? (isCollapsed ? components[0] : components[1]) : (
+        <>
+          {components[0]}
+          {!isCollapsed && components[1]}
+        </>
+      )}
     </div>
   );
 };
 
+const StringLog = ({ log, ...props }: React.HTMLAttributes<HTMLDivElement> & { log: any }) => {
+  return (
+    <div {...props} className={`${styles.log} ${props.className ?? ''}`}>{log.toString()}</div>
+  );
+};
+
 const ArrayLog = ({
-  arr,
+  log,
   scope,
   isMinimized,
 }: {
-  arr: any[];
+  log: unknown[];
   scope: WeakMap<any, any>;
   isMinimized: boolean;
 }) => {
   if (isMinimized) {
     return (
       <div className={`${styles.log} ${styles.is_array}`}>
-        Array({arr.length})
+        Array({log.length})
       </div>
     );
   }
@@ -51,20 +66,20 @@ const ArrayLog = ({
   return (
     <Collapsable className={styles.is_array}>
       <>
-        <i>({arr.length}) </i>[
-        {arr.slice(0, 5).map((item, index) => {
+        <i>({log.length}) </i>[
+        {log.slice(0, 5).map((item, index) => {
           return (
             <>
               <LogItem scope={scope} isMinimized={true} logs={[item]} />
-              {index < arr.length - 1 && ","}
+              {index < log.length - 1 && ","}
             </>
           );
         })}
-        {arr.length > 5 && "…"}]
+        {log.length > 5 && "…"}]
       </>
       <>
         <ul>
-          {arr.map((item, index) => {
+          {log.map((item, index) => {
             return (
               <li key={`arr_log_list_${index}`}>
                 <span className={styles.index}>
@@ -78,7 +93,7 @@ const ArrayLog = ({
             <span className={styles.index}>
               <strong>length</strong>:
             </span>{" "}
-            <NumberLog num={arr.length} />
+            <StringLog className={styles.is_number} log={log.length} />
           </li>
         </ul>
       </>
@@ -87,23 +102,18 @@ const ArrayLog = ({
 };
 
 const ObjectLog = ({
-  obj,
+  log,
   scope,
   isMinimized,
 }: {
-  prefix?: string;
-  obj: Record<string, any>;
+  log: Record<string, any>;
   scope: WeakMap<any, any>;
   isMinimized: boolean;
 }) => {
-  let prefix = obj[Symbol.toStringTag as any];
+  let prefix: string | null = getObjectName(log);
+  prefix = prefix === "Object" ? null : prefix;
 
-  if (!prefix) {
-    prefix =
-      obj.constructor.name === "Object" ? undefined : obj.constructor.name;
-  }
-
-  const objKeys = Object.getOwnPropertyNames(obj);
+  const objKeys = Object.getOwnPropertyNames(log);
 
   if (isMinimized) {
     return (
@@ -121,7 +131,7 @@ const ObjectLog = ({
           return (
             <>
               <span>{key}</span>:{" "}
-              <LogItem scope={scope} isMinimized={true} logs={[obj[key]]} />
+              <LogItem scope={scope} isMinimized={true} logs={[log[key]]} />
               {index < objKeys.length - 1 && ", "}
             </>
           );
@@ -137,7 +147,7 @@ const ObjectLog = ({
                 <span className={styles.index}>
                   <strong>{key}</strong>:{" "}
                 </span>
-                <LogItem scope={scope} isMinimized={false} logs={[obj[key]]} />
+                <LogItem scope={scope} isMinimized={false} logs={[log[key]]} />
               </li>
             );
           })}
@@ -153,26 +163,26 @@ const ObjectLog = ({
 };
 
 const MapLog = ({
-  map,
+  log,
   scope,
   isMinimized,
 }: {
-  map: Map<any, any>;
+  log: Map<any, any>;
   scope: WeakMap<any, any>;
   isMinimized: boolean;
 }) => {
-  const mapArray = Array.from(map);
+  const mapArray = Array.from(log);
 
   if (isMinimized) {
     return (
-      <div className={`${styles.log} ${styles.is_map}`}>Map({map.size})</div>
+      <div className={`${styles.log} ${styles.is_map}`}>Map({log.size})</div>
     );
   }
 
   return (
     <Collapsable className={styles.is_map}>
       <>
-        Map({`${map.size}`}) {"{"}
+        Map({`${log.size}`}) {"{"}
         {mapArray.slice(0, 5).map(([key, item], index) => {
           return (
             <>
@@ -201,7 +211,7 @@ const MapLog = ({
             <span className={styles.index}>
               <strong>size</strong>:
             </span>{" "}
-            <NumberLog num={map.size} />
+            <StringLog className={styles.is_number} log={log.size} />
           </li>
         </ul>
       </>
@@ -210,26 +220,26 @@ const MapLog = ({
 };
 
 const SetLog = ({
-  set,
+  log,
   scope,
   isMinimized,
 }: {
-  set: Set<any>;
+  log: Set<any>;
   scope: WeakMap<any, any>;
   isMinimized: boolean;
 }) => {
-  const setArray = Array.from(set);
+  const setArray = Array.from(log);
 
   if (isMinimized) {
     return (
-      <div className={`${styles.log} ${styles.is_set}`}>Set({set.size})</div>
+      <div className={`${styles.log} ${styles.is_set}`}>Set({log.size})</div>
     );
   }
 
   return (
     <Collapsable className={styles.is_set}>
       <>
-        Set({`${set.size}`}) {"{"}
+        Set({`${log.size}`}) {"{"}
         {setArray.slice(0, 5).map((item, index) => {
           return (
             <>
@@ -257,7 +267,7 @@ const SetLog = ({
             <span className={styles.index}>
               <strong>size</strong>:
             </span>{" "}
-            <NumberLog num={set.size} />
+            <StringLog className={styles.is_number} log={log.size} />
           </li>
         </ul>
       </>
@@ -265,61 +275,20 @@ const SetLog = ({
   );
 };
 
-const NullLog = () => {
-  return <div className={`${styles.log} ${styles.is_null}`}>null</div>;
-};
-
-const UndefinedLog = () => {
-  return (
-    <div className={`${styles.log} ${styles.is_undefined}`}>undefined</div>
-  );
-};
-
-const NumberLog = ({ num }: { num: number }) => {
-  return <div className={`${styles.log} ${styles.is_number}`}>{num}</div>;
-};
-
-const StringLog = ({ str }: { str: string }) => {
-  return (
-    <div className={`${styles.log} ${styles.is_string}`}>&apos;{str}&apos;</div>
-  );
-};
-
-const RegExpLog = ({ regex }: { regex: RegExp }) => {
-  return (
-    <div className={`${styles.log} ${styles.is_string}`}>
-      {regex.toString()}
-    </div>
-  );
-};
-
-const BooleanLog = ({ bool }: { bool: boolean }) => {
-  return (
-    <div className={`${styles.log} ${styles.is_boolean}`}>
-      {bool.toString()}
-    </div>
-  );
-};
-
 const FunctionLog = ({
-  func,
+  log,
   isMinimized,
 }: {
-  func: Function;
+  log: Function;
   isMinimized: boolean;
 }) => {
-  const funcStr = func.toString();
-  const isClass = funcStr.startsWith("class");
-  const body = func.toString().replace(/^(function|class)\s*/g, "");
-  const symbol = isClass ? "class" : "ƒ";
+  const func = parseFunction(log);
 
   return (
     <div className={`${styles.log} ${styles.is_function}`}>
-      {isMinimized ? (
-        symbol
-      ) : (
+      {isMinimized ? func.symbol : (
         <>
-          <span>{symbol}</span> {body}
+          <span>{func.symbol}</span> {func.body}
         </>
       )}
     </div>
@@ -327,52 +296,40 @@ const FunctionLog = ({
 };
 
 const ErrorLog = ({
-  err,
+  log,
   isMinimized,
 }: {
-  err: Error;
+  log: Error;
   isMinimized: boolean;
 }) => {
   if (isMinimized) {
     return (
-      <div className={`${styles.log} ${styles.is_error}`}>{err.message}</div>
+      <div className={`${styles.log} ${styles.is_error}`}>{log.message}</div>
     );
   }
 
   return (
     <Collapsable className={styles.is_error}>
-      <>{err.message}</>
+      <>{log.message}</>
       <>
         <br />
-        {err.stack}
+        {log.stack}
       </>
     </Collapsable>
   );
 };
 
-const DateLog = ({ date }: { date: Date }) => {
-  return (
-    <div className={`${styles.log} ${styles.is_date}`}>{date.toString()}</div>
-  );
-};
-
-const SymbolLog = ({ symbol }: { symbol: symbol }) => {
-  return (
-    <div className={`${styles.log} ${styles.is_symbol}`}>
-      {symbol.toString()}
-    </div>
-  );
-};
-
 const PromiseLog = ({
+  log,
   scope,
-  meta,
   isMinimized,
 }: {
+  log: Promise<any>,
   scope: WeakMap<any, any>;
-  meta: Record<any, any>;
   isMinimized: boolean;
 }) => {
+  const meta = scope.get(log);
+
   if (isMinimized) {
     return <div className={`${styles.log} ${styles.is_promise}`}>Promise</div>;
   }
@@ -381,22 +338,18 @@ const PromiseLog = ({
     <Collapsable className={styles.is_promise}>
       <>
         Promise {"{"}
-        <span>
-          {"<"}
-          {meta.state}
-          {">"}
-        </span>
-        : <LogItem scope={scope} isMinimized={true} logs={[meta.value]} />
+        <span>{"<"}{meta.state}{">"}</span>:{" "}
+        <LogItem scope={scope} isMinimized={true} logs={[meta.value]} />
         {"}"}
       </>
       <>
         <ul>
           <li>
-            <span className={styles.index_internal}>[[PromiseState]]: </span>
-            <StringLog str={meta.state} />
+            <span className={styles.index_internal}>[[PromiseState]]:</span>{" "}
+            <StringLog log={`'${meta.state}'`} className={styles.is_string} />
           </li>
           <li>
-            <span className={styles.index_internal}>[[PromiseResult]]: </span>
+            <span className={styles.index_internal}>[[PromiseResult]]:</span>{" "}
             <LogItem scope={scope} isMinimized={false} logs={[meta.value]} />
           </li>
         </ul>
@@ -406,14 +359,16 @@ const PromiseLog = ({
 };
 
 const ProxyLog = ({
+  log,
   scope,
-  meta,
   isMinimized,
 }: {
+  log: Record<any, any>;
   scope: WeakMap<any, any>;
-  meta: Record<any, any>;
   isMinimized: boolean;
 }) => {
+  const meta = scope.get(log);
+
   if (isMinimized) {
     return <div className={`${styles.log} ${styles.is_proxy}`}>Proxy</div>;
   }
@@ -441,6 +396,212 @@ const ProxyLog = ({
   );
 };
 
+const HTMLTag = ({ elm, scope, children }: React.PropsWithChildren<{elm: Element, scope: WeakMap<any, any> }>) => {
+  return (
+    <>
+      {'<'}
+        {elm.tagName.toLowerCase()}
+        {Array.from(elm.attributes).map((attr, index) => 
+          <LogItem scope={scope} key={`html_attr_${index}`} isMinimized={false} logs={[attr]} />
+        )}
+      {'>'}
+      {children}
+      {`</${elm.tagName.toLowerCase()}>`}
+    </>
+  )
+};
+
+const HTMLLog = ({
+  log,
+  scope,
+  isMinimized,
+}: {
+  log:  Element | Attr | Text | Comment | ProcessingInstruction | Document | DocumentFragment;
+  scope: WeakMap<any, any>;
+  isMinimized: boolean;
+}) => {
+  if (log.nodeType === NodeTypes.DOCUMENT_NODE) {
+    const doc = log as Document;
+    const href = doc.location?.href ?? 'about:blank';
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>document</span>
+        </div>
+      );
+    }
+
+    return (
+      <Collapsable className={`${styles.log} ${styles.is_html}`}>
+        <>
+          <StringLog log={`#document (${href})`} />
+        </>
+        <>
+        <ul>
+            {Array.from(doc.childNodes).map((child, index) => (
+              <li key={`html_doc_child_${index}`}>
+                <LogItem scope={scope} isMinimized={false} logs={[child]} />
+              </li>
+            ))}
+          </ul>
+        </>
+      </Collapsable>
+    )
+  }
+
+  const node = log.cloneNode(true);
+
+  if (node.nodeType === NodeTypes.DOCUMENT_FRAGMENT_NODE) {
+    const fragment = log as DocumentFragment;
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>document-fragment</span>
+        </div>
+      );
+    }
+
+    return (
+      <Collapsable className={`${styles.log} ${styles.is_html}`}>
+        <>
+          <StringLog log="#document-fragment" />
+        </>
+        <>
+        <ul>
+            {Array.from(fragment.childNodes).map((child, index) => (
+              <li key={`html_doc-fragment_child_${index}`}>
+                <LogItem scope={scope} isMinimized={false} logs={[child]} />
+              </li>
+            ))}
+          </ul>
+        </>
+      </Collapsable>
+    )
+  }
+  
+  if (node.nodeType === NodeTypes.TEXT_NODE) {
+    const text = node as Text;
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>text</span>
+        </div>
+      );
+    }
+
+    return <StringLog className={`${styles.is_html} ${styles.is_text}`} log={`"${text.wholeText}"`} />;
+  }
+
+  if (node.nodeType === NodeTypes.ATTRIBUTE_NODE) {
+    const attr = node as Attr;
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>{attr.name}</span>
+        </div>
+      );
+    }
+    
+    return (
+      <div className={`${styles.log} ${styles.is_html} ${styles.is_attribute}`}>
+        <span>{attr.name}</span>="<span>{attr.value}</span>"
+      </div>
+    );
+  }
+
+  if (node.nodeType === NodeTypes.ELEMENT_NODE) {
+    const elm = node as Element;
+
+    if (isMinimized) {
+      const tagName = elm.tagName.toLowerCase();
+      const classNames = elm.classList.value.replaceAll(' ', '.');
+
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>{tagName}</span>
+          <span>{elm.id && `#${elm.id}`}</span>
+          <span>{elm.classList.length > 0 && `.${classNames}`}</span>
+        </div>
+      );
+    }
+
+    if (elm.childNodes.length === 0) {
+      return (
+        <div className={`${styles.log} ${styles.is_html} ${styles.is_element}`}>
+          <HTMLTag elm={elm} scope={scope} />
+        </div>
+      )
+    }
+
+    return (
+      <Collapsable className={`${styles.is_html} ${styles.is_element}`} toggle={true}>
+        <>
+          <HTMLTag elm={elm} scope={scope}>{"{…}"}</HTMLTag>
+        </>
+        <>
+          {'<'}{elm.tagName.toLowerCase()}
+              {Array.from(elm.attributes).map((attr, index) => 
+                <LogItem scope={scope} key={`html_attr_${index}`} isMinimized={false} logs={[attr]} />
+              )}
+          {'>'}
+          <ul>
+            {Array.from(elm.childNodes).map((child, index) => (
+              <li key={`html_elm_child_${index}`}>
+                <LogItem scope={scope} isMinimized={false} logs={[child]} />
+              </li>
+            ))}
+            <li>
+              {`</${elm.tagName.toLowerCase()}>`}
+            </li>
+          </ul>
+        </>
+      </Collapsable>
+    );
+  }
+
+  if (node.nodeType === NodeTypes.COMMENT_NODE) {
+    const comment = node as Comment;
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>comment</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`${styles.log} ${styles.is_html} ${styles.is_comment}`}>
+        {'<!--'}{comment.data}{'-->'}
+      </div>
+    );
+  }
+
+  if (node.nodeType === NodeTypes.PROCESSING_INSTRUCTION_NODE) {
+    const text = node as ProcessingInstruction;
+
+    if (isMinimized) {
+      return (
+        <div className={`${styles.log} ${styles.is_element} ${styles.is_minimized}`}>
+          <span>{text.target}</span>
+        </div>
+      );
+    }
+
+    return <StringLog className={styles.is_html} log={text.target} />;
+  }
+
+  return (
+    <div className={`${styles.log} ${styles.is_html}`}>
+      {/* {log.outerHTML} */}
+    </div>
+  );
+};
+
 export default function LogItem({
   logs,
   scope,
@@ -453,72 +614,86 @@ export default function LogItem({
   return (
     <>
       {logs.map((log, index) => {
-        if (log === null) {
-          return <NullLog key={`log_item_${index}`} />;
-        }
+        const type = scope.get(log)?.isProxy ? ValueTypes.PROXY : getType(log);
 
-        if (log === undefined) {
-          return <UndefinedLog key={`log_item_${index}`} />;
-        }
-
-        if (typeof log === "number") {
-          return <NumberLog key={`log_item_${index}`} num={log} />;
-        }
-
-        if (typeof log === "string") {
-          return <StringLog key={`log_item_${index}`} str={log} />;
-        }
-
-        if (typeof log === "boolean") {
-          return <BooleanLog key={`log_item_${index}`} bool={log} />;
-        }
-
-        if (scope.get(log)?.isProxy) {
+        if (type === ValueTypes.PROXY) {
           return (
             <ProxyLog
+              log={log}
               scope={scope}
-              meta={scope.get(log)}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
             />
           );
         }
 
-        if (log.constructor?.name === "Promise") {
+        if (type === ValueTypes.NULL) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_null} log="null" />;
+        }
+
+        if (type === ValueTypes.UNDEFINED) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_undefined} log="undefined" />;
+        }
+
+        if (type === ValueTypes.NUMBER) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_number} log={log} />;
+        }
+
+        if (type === ValueTypes.STRING) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_string} log={`'${log}'`} />;
+        }
+
+        if (type === ValueTypes.BOOLEAN) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_boolean} log={log} />;
+        }
+
+        if (type === ValueTypes.DATE) {
+          return <StringLog key={`log_item_${index}`} log={log} />;
+        }
+
+        if (type === ValueTypes.REGEXP) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_string} log={log} />;
+        }
+
+        if (type === ValueTypes.SYMBOL) {
+          return <StringLog key={`log_item_${index}`} className={styles.is_symbol} log={log} />;
+        }
+
+        if (type === ValueTypes.PROMISE) {
           return (
             <PromiseLog
+              log={log}
               scope={scope}
-              meta={scope.get(log)}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
             />
           );
         }
 
-        if (typeof log === "function") {
+        if (type === ValueTypes.FUNCTION) {
           return (
             <FunctionLog
-              func={log}
+              log={log}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
             />
           );
         }
 
-        if (log.constructor?.name === "Error") {
+        if (type === ValueTypes.ERROR) {
           return (
             <ErrorLog
-              err={log}
+              log={log}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
             />
           );
         }
 
-        if (Array.isArray(log)) {
+        if (type === ValueTypes.ARRAY) {
           return (
             <ArrayLog
-              arr={log}
+              log={log}
               scope={scope}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
@@ -526,10 +701,10 @@ export default function LogItem({
           );
         }
 
-        if (log.constructor?.name === "Map") {
+        if (type === ValueTypes.MAP) {
           return (
             <MapLog
-              map={log}
+              log={log}
               scope={scope}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
@@ -537,10 +712,10 @@ export default function LogItem({
           );
         }
 
-        if (log.constructor?.name === "Set") {
+        if (type === ValueTypes.SET) {
           return (
             <SetLog
-              set={log}
+              log={log}
               scope={scope}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
@@ -548,18 +723,21 @@ export default function LogItem({
           );
         }
 
-        if (log.constructor?.name === "Date") {
-          return <DateLog key={`log_item_${index}`} date={log} />;
+        if (type === ValueTypes.HTML_ELEMENT) {
+          return (
+            <HTMLLog
+              log={log}
+              scope={scope}
+              isMinimized={isMinimized}
+              key={`log_item_${index}`}
+            />
+          )
         }
 
-        if (log.constructor?.name === "RegExp") {
-          return <RegExpLog key={`log_item_${index}`} regex={log} />;
-        }
-
-        if (typeof log === "object") {
+        if (type === ValueTypes.OBJECT) {
           return (
             <ObjectLog
-              obj={log}
+              log={log}
               scope={scope}
               isMinimized={isMinimized}
               key={`log_item_${index}`}
@@ -567,17 +745,7 @@ export default function LogItem({
           );
         }
 
-        if (typeof log === "symbol") {
-          return <SymbolLog key={`log_item_${index}`} symbol={log} />;
-        }
-
-        return (
-          <div className={styles.log} key={`log_item_${index}`}>
-            {Object.prototype.hasOwnProperty.call(log, "toString")
-              ? log.toString()
-              : JSON.stringify(log)}
-          </div>
-        );
+        return <StringLog key={`log_item_${index}`} log={log?.toString() ?? JSON.stringify(log)} />;
       })}
     </>
   );
