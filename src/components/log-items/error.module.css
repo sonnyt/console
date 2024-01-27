@@ -1,0 +1,4 @@
+.is_error {
+  display: inline;
+  color: var(--color-ansi-bright-red);
+}

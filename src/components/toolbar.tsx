@@ -32,6 +32,19 @@ export default function Toolbar() {
         )}
       </div>
       <div>
+        <a
+          target="_blank"
+          rel="noreferrer"
+          title="View on GitHub"
+          className={styles.link}
+          href="https://github.com/sonnyt/console"
+        >
+          <Icons.Github
+            width={14}
+            height={14}
+            className={styles.icon}
+          />
+        </a>
         <Icons.Error
           width={14}
           height={14}

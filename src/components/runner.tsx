@@ -29,11 +29,17 @@ export default function Runner() {
           },
         });
       });
-  
+
       // stub the iframe Promise and Proxy
-      (iframeWindow as any).Promise = promiseStub(scope, (iframeWindow as any).Promise);
-      (iframeWindow as any).Proxy = proxyStub(scope, (iframeWindow as any).Proxy);
-  
+      (iframeWindow as any).Promise = promiseStub(
+        scope,
+        (iframeWindow as any).Promise
+      );
+      (iframeWindow as any).Proxy = proxyStub(
+        scope,
+        (iframeWindow as any).Proxy
+      );
+
       // listen for errors in the iframe
       iframeWindow.addEventListener("error", (e: ErrorEvent) => {
         e.preventDefault();
@@ -44,12 +50,12 @@ export default function Runner() {
           },
         });
       });
-  
+
       // create a script tag and append it to the iframe body
       const script = document.createElement("script");
       script.text = state.selectedCode ?? state.code;
       iframeWindow.document.body.appendChild(script);
-  
+
       setTimeout(() => dispatch({ type: "RUN_COMPLETE" }), 250);
     };
   }, [iframeRef, state.isRunning, state.code, state.selectedCode, dispatch]);

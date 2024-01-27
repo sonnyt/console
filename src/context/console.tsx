@@ -5,7 +5,7 @@ import type { Type } from "../libs/log";
 export type State = {
   code: string;
   selectedCode: string | null;
-  logs: { type: Type; args: any[], scope: WeakMap<any, any> }[];
+  logs: { type: Type; args: any[]; scope: WeakMap<any, any> }[];
   isRunning: boolean;
 };
 

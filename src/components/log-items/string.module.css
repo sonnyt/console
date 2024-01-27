@@ -1,0 +1,17 @@
+.null,
+.undefined {
+  color: var(--color-muted);
+}
+
+.string {
+  color: var(--color-ansi-green);
+}
+
+.symbol {
+  color: var(--color-ansi-cyan);
+}
+
+.boolean,
+.number {
+  color: var(--color-ansi-blue);
+}

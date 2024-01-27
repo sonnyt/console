@@ -11,10 +11,7 @@ export default function Home() {
   return (
     <ConsoleProvider>
       <div className={styles.container}>
-        <PanelGroup
-          direction="horizontal"
-          autoSaveId="panel_size"
-        >
+        <PanelGroup direction="horizontal" autoSaveId="panel_size">
           <Panel>
             <Editor />
           </Panel>

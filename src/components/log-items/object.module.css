@@ -1,0 +1,7 @@
+.is_object {
+  font-style: italic;
+}
+
+.key {
+  color: var(--color-muted);
+}

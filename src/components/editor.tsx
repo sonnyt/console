@@ -46,14 +46,14 @@ export default function Editor() {
   }, [monaco, dispatch]);
 
   return (
-      <CodeEditor
-        height="100%"
-        theme="vs-dark"
-        options={options}
-        value={state.code}
-        language="javascript"
-        onMount={(editor) => editor.focus()}
-        onChange={(code) => dispatch({ type: "SET_CODE", payload: { code } })}
-      />
+    <CodeEditor
+      height="100%"
+      theme="vs-dark"
+      options={options}
+      value={state.code}
+      language="javascript"
+      onMount={(editor) => editor.focus()}
+      onChange={(code) => dispatch({ type: "SET_CODE", payload: { code } })}
+    />
   );
 }

@@ -1,0 +1,53 @@
+.log {
+  font-size: .75rem;
+  line-height: 1.5;
+  display: inline-block;
+  white-space: pre;
+}
+
+.log + .log {
+  margin-left: 0.5rem;
+  vertical-align: top;
+}
+
+.collapse {
+  cursor: pointer;
+  margin-left: -4px;
+}
+
+.collapse:hover {
+  background-color: var(--highlight-color);
+}
+
+.icon {
+  margin-left: -3px;
+  position: relative;
+  top: 2px;
+}
+
+.properties {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-style: normal;
+  padding-left: 1rem;
+  margin-left: 0.25rem;
+  border-left: 1px solid var(--border-color);
+}
+
+.properties > li > div {
+  margin-left: 0;
+}
+
+.length {
+  opacity: .5;
+}
+
+.key {
+  vertical-align: top;
+}
+
+.no_props {
+  font-style: italic;
+  color: var(--color-muted);
+}

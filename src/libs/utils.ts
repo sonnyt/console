@@ -1,6 +1,6 @@
 import { NodeTypes, ValueTypes } from "./constants";
 
-export function getType(val: any)  {
+export function getType(val: any) {
   switch (true) {
     case val === null:
       return ValueTypes.NULL;
