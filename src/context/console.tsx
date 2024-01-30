@@ -1,17 +1,25 @@
 import { useReducer, createContext, useContext } from "react";
+import { editor as monacoEditor, languages } from "monaco-editor";
 
 import type { Type } from "../libs/log";
+import { Languages } from "../libs/constants";
+
+export type IStandaloneCodeEditor = monacoEditor.IStandaloneCodeEditor;
+export type TypeScriptWorker = languages.typescript.TypeScriptWorker;
 
 export type State = {
   code: string;
-  selectedCode: string | null;
-  logs: { type: Type; args: any[]; scope: WeakMap<any, any> }[];
   isRunning: boolean;
+  editor: IStandaloneCodeEditor | null;
+  language: Languages.TS | Languages.JS;
+  logs: { type: Type; args: any[]; scope: WeakMap<any, any> }[];
 };
 
 export type ActionType =
+  | "SET_EDITOR"
   | "SET_CODE"
   | "SET_LOGS"
+  | "SET_LANGUAGE"
   | "CLEAR_LOGS"
   | "RUN_CODE"
   | "RUN_COMPLETE";
@@ -30,10 +38,13 @@ const reducer = (state: State, action: Action) => {
   const { type, payload } = action;
 
   switch (type) {
+    case "SET_EDITOR":
+      return { ...state, editor: payload.editor };
     case "SET_CODE":
       const code = payload.code?.trim() || "";
-      localStorage.setItem("code", code);
       return { ...state, code };
+    case "SET_LANGUAGE":
+      return { ...state, language: payload.language };
     case "SET_LOGS":
       return {
         ...state,
@@ -48,13 +59,11 @@ const reducer = (state: State, action: Action) => {
       return {
         ...state,
         isRunning: true,
-        selectedCode: payload?.selectedCode,
       };
     case "RUN_COMPLETE":
       return {
         ...state,
         isRunning: false,
-        selectedCode: null,
       };
     default:
       return state;
@@ -64,9 +73,10 @@ const reducer = (state: State, action: Action) => {
 export function ConsoleProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, {
     logs: [],
-    code: localStorage?.getItem("code") ?? "",
+    code: "",
+    editor: null,
     isRunning: false,
-    selectedCode: null,
+    language: Languages.TS,
   });
 
   return (

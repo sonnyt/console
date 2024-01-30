@@ -9,14 +9,14 @@
   border-top: 1px solid var(--border-color);
 }
 
-.icon {
-  margin-right: 0.25rem;
-  vertical-align: text-bottom;
-}
-
 .container a {
   color: var(--text-color);
   text-decoration: none;
+}
+
+.container a > svg {
+  margin: 0;
+  vertical-align: text-top;
 }
 
 .container button {
@@ -29,20 +29,31 @@
   color: var(--text-color);
 }
 
-.container button >svg {
+.container button > svg {
   margin: 0;
   vertical-align: text-top;
 }
 
-.link >svg {
-  margin: 0;
-  vertical-align: text-top;
+.icon {
+  vertical-align: text-bottom;
 }
 
-.link + .icon,
-.icon + button,
-.icon + .icon {
+.icon,
+.container a,
+.container select,
+.container button {
   margin-left: 0.5rem;
+}
+
+.container button:first-child,
+.container a:first-child,
+.icon:first-child {
+  margin-left: 0;
+}
+
+.error,
+.warning {
+  margin-right: 0.25rem;
 }
 
 .run {
@@ -62,6 +73,18 @@
   animation-duration: 750ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear; 
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: 0;
+  outline: none;
+  top: -1px;
 }
 
 @keyframes spin {

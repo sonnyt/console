@@ -1,3 +1,8 @@
+export enum Languages {
+  JS = "javascript",
+  TS = "typescript",
+}
+
 export enum LogTypes {
   INFO = "info",
   ERROR = "error",

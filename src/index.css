@@ -14,6 +14,7 @@
   --color-ansi-red: #e05561;
   --color-ansi-bright-red: #ff616e;
   --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  color-scheme: dark;
 }
 
 *,:before,:after {
