@@ -1,0 +1,7 @@
+.is_promise {
+  font-style: italic;
+}
+
+.state {
+  color: var(--color-muted);
+}

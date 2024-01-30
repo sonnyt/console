@@ -1,6 +1,7 @@
 import { EditorProps } from "@monaco-editor/react";
 
 export const options: EditorProps["options"] = {
+  automaticLayout: true,
   tabSize: 2,
   scrollBeyondLastLine: false,
   minimap: {

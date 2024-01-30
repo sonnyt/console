@@ -2,16 +2,21 @@
   font-size: 0.75rem;
   line-height: 10px;
   padding: 0.5rem 1rem;
-  border-top: 1px solid var(--border-color);
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: space-between;
+  border-top: 1px solid var(--border-color);
 }
 
-.icon {
-  margin-right: 0.25rem;
-  vertical-align: text-bottom;
+.container a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.container a > svg {
+  margin: 0;
+  vertical-align: text-top;
 }
 
 .container button {
@@ -24,26 +29,43 @@
   color: var(--text-color);
 }
 
-.container button >svg {
+.container button > svg {
   margin: 0;
   vertical-align: text-top;
 }
 
-.icon + button,
-.icon + .icon {
+.icon {
+  vertical-align: text-bottom;
+}
+
+.icon,
+.container a,
+.container select,
+.container button {
   margin-left: 0.5rem;
 }
 
+.container button:first-child,
+.container a:first-child,
+.icon:first-child {
+  margin-left: 0;
+}
+
+.error,
+.warning {
+  margin-right: 0.25rem;
+}
+
 .run {
-  color: #8cc265;
+  color: var(--color-ansi-green);
 }
 
 .warning {
-  color: #d18f52;
+  color: var(--color-ansi-yellow);
 }
 
 .error {
-  color: #e05561;
+  color: var(--color-ansi-red);
 }
 
 .loading {
@@ -51,6 +73,18 @@
   animation-duration: 750ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear; 
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  border: 0;
+  outline: none;
+  top: -1px;
 }
 
 @keyframes spin {

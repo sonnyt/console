@@ -1,4 +1,4 @@
-export const TYPES = ["log", "info", "warn", "error"];
+export const TYPES = ["log", "info", "warn", "debug", "error"];
 export type Type = (typeof TYPES)[number];
 
 export default function consoleStub(

@@ -1,0 +1,7 @@
+.is_map {
+  font-style: italic;
+}
+
+.key {
+  color: var(--color-muted);
+}

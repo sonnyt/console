@@ -1,10 +1,20 @@
 import { useEffect } from "react";
-import { Editor as CodeEditor, useMonaco } from "@monaco-editor/react";
+import {
+  Editor as CodeEditor,
+  useMonaco,
+  type OnMount,
+  type OnChange,
+} from "@monaco-editor/react";
 
 import { useConsole } from "../context/console";
 import { darkTheme, options } from "../libs/editor";
 
-export default function Editor() {
+export type EditorProps = {
+  defaultValue?: string;
+  onChange: (code?: string) => void;
+};
+
+export default function Editor({ defaultValue, onChange }: EditorProps) {
   const monaco = useMonaco();
   const [state, dispatch] = useConsole();
 
@@ -18,21 +28,11 @@ export default function Editor() {
 
     monaco.editor.addEditorAction({
       id: "execute_code",
-      label: "Execute Code",
+      label: "Run Code",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
       contextMenuGroupId: "navigation",
       contextMenuOrder: 0,
-      run: (editor) => {
-        const selectedCode = editor
-          .getModel()
-          ?.getValueInRange(editor?.getSelection()!);
-
-        if (selectedCode?.trim()) {
-          dispatch({ type: "RUN_CODE", payload: { selectedCode } });
-        } else {
-          dispatch({ type: "RUN_CODE" });
-        }
-      },
+      run: () => dispatch({ type: "RUN_CODE" }),
     });
 
     monaco.editor.addEditorAction({
@@ -45,15 +45,25 @@ export default function Editor() {
     });
   }, [monaco, dispatch]);
 
+  const handleEditorDidMount: OnMount = (editor) => {
+    editor.focus();
+    dispatch({ type: "SET_EDITOR", payload: { editor } });
+  };
+
+  const handleOnChange: OnChange = (code?: string) => {
+    dispatch({ type: "SET_CODE", payload: { code } });
+    onChange(code);
+  };
+
   return (
-      <CodeEditor
-        height="100%"
-        theme="vs-dark"
-        options={options}
-        value={state.code}
-        language="javascript"
-        onMount={(editor) => editor.focus()}
-        onChange={(code) => dispatch({ type: "SET_CODE", payload: { code } })}
-      />
+    <CodeEditor
+      height="100%"
+      theme="vs-dark"
+      options={options}
+      value={defaultValue}
+      language={state.language}
+      onChange={handleOnChange}
+      onMount={handleEditorDidMount}
+    />
   );
 }

@@ -22,26 +22,30 @@
 }
 
 .logs > li.warn {
-  color: #f0a45d;
+  background-color: rgb(240 164 93 / 5%);
+}
+
+.logs > li.warn .icon {
+  color: var(--color-ansi-bright-yellow);
 }
 
 .logs > li.error {
-  color: #ff616e;
+  background-color: rgba(255 97 110 / 5%);
+}
+
+.logs > li.error .icon {
+  color: var(--color-ansi-bright-red);
 }
 
 .icon {
-  vertical-align: text-bottom;
-  margin-right: 0.35rem;
+  vertical-align: top;
+  margin-right: 0.5rem;
   position: relative;
-  bottom: 1px;
+  top: 2px;
 }
 
 @keyframes highlight {
   from {
-      background-color: #2c313c;
-  }
-
-  to {
-      background-color: transparent;
+    background-color: #2c313c;
   }
 }
