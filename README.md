@@ -1,4 +1,4 @@
-# JavaScript Console
+# JavaScript/TypeScript Console
 
 Simple JavaScript/TypeScript console. Open source alternative to [JSFiddle](https://jsfiddle.net) and [JS Bin](https://jsbin.com).
 
@@ -8,7 +8,7 @@ Simple JavaScript/TypeScript console. Open source alternative to [JSFiddle](http
 Try out the console [here](https://console.sonnyt.com).
 
 ## Why?
-I needed a convenient way to quickly run JavaScript code without having to open VSCode or a terminal. Other alternatives I found were either too bloated with a heavy focus on HTML and CSS, or too basic with unreliable logging. So, I decided to build my own JavaScript console using the same editor that VSCode uses, which provides a lot of handy features right out of the box.
+I needed a convenient way to quickly run JavaScript and TypeScript code without having to open VSCode or a terminal. Other alternatives I found were either too bloated with a heavy focus on HTML and CSS, or too basic with unreliable logging. So, I decided to build my own code runner using the same editor that VSCode uses, which provides a lot of handy features right out of the box.
 
 ## Features
 - TypeScript support
